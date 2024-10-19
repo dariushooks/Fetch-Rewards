@@ -1,6 +1,7 @@
 package com.example.fetchrewards
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,21 +12,36 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
+import androidx.compose.material3.carousel.HorizontalUncontainedCarousel
+import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.fetchrewards.ui.theme.FetchOrange
+import com.example.fetchrewards.ui.theme.FetchPurple
 import com.example.fetchrewards.ui.theme.FetchRewardsTheme
+import kotlin.random.Random
 
 @Preview
 @Composable
@@ -40,23 +56,34 @@ fun MainScreenPreview(){
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(map: Map<Int, List<FetchItem>>, modifier: Modifier){
     val fetchItems = map.toList()
     Column(modifier = modifier) {
-        Spacer(Modifier.height(10.dp))
-        Text(
-            text = "Fetch Rewards",
-            fontSize = 25.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(start = 10.dp)
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .background(FetchPurple)
+                .fillMaxWidth()
+        ){
+            Spacer(Modifier.width(5.dp))
+            Image(
+                painter = painterResource(R.drawable.fetch_logo_outline),
+                contentDescription = "",
+                modifier = Modifier.padding(5.dp)
+            )
 
-        Spacer(Modifier.height(15.dp))
+            Text(
+                text = "Fetch Rewards",
+                fontSize = 27.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
+        }
 
         LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+            verticalArrangement = Arrangement.spacedBy(40.dp)
         ){
 
             fetchItems.forEach { pair ->
@@ -64,7 +91,8 @@ fun MainScreen(map: Map<Int, List<FetchItem>>, modifier: Modifier){
                     Card(
                         modifier = Modifier
                             .fillMaxWidth(),
-                        shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
+                        shape = RoundedCornerShape(0.dp),
+                        colors = CardDefaults.cardColors(containerColor = FetchOrange)
                     ) {
                         Spacer(Modifier.height(10.dp))
                         Row(modifier = Modifier.fillMaxWidth()) {
@@ -72,18 +100,35 @@ fun MainScreen(map: Map<Int, List<FetchItem>>, modifier: Modifier){
                             Text(
                                 text = "List Id ${pair.first}",
                                 fontSize = 25.sp,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Bold,
+                                color = FetchPurple
                             )
                         }
                         Spacer(Modifier.height(10.dp))
                     }
                 }
 
-                items(
-                    items = pair.second,
-                ){ fetchItem ->
-                    val last = pair.second.last()
-                    GroupItem(fetchItem, last)
+                item{
+                    /*HorizontalMultiBrowseCarousel(
+                        state = rememberCarouselState { pair.second.size },
+                        preferredItemWidth = 250.dp,
+                        itemSpacing = 30.dp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 10.dp)
+                    ) { index ->
+                        GroupItem(pair.second[index])
+                    }*/
+                    LazyRow(
+                        modifier = Modifier.padding(start = 10.dp),
+                        horizontalArrangement = Arrangement.spacedBy(20.dp)
+                    ) {
+                        items(
+                            items = pair.second,
+                        ){ fetchItem ->
+                            GroupItem(fetchItem)
+                        }
+                    }
                 }
             }
         }
@@ -91,31 +136,74 @@ fun MainScreen(map: Map<Int, List<FetchItem>>, modifier: Modifier){
 }
 
 @Composable
-fun GroupItem(fetchItem: FetchItem, last : FetchItem){
-    Row(
+fun GroupItem(fetchItem: FetchItem){
+    Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 50.dp)
-    ){
-        Text(
-            text = "Name: ${fetchItem.name}",
-            fontSize = 18.sp
+            .width(
+                width = 250.dp
+            )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ){
+            Row {
+                Image(
+                    painter = painterResource(R.drawable.shop),
+                    contentDescription = "",
+                    colorFilter = ColorFilter.tint(FetchOrange)
+                )
+
+                Spacer(modifier = Modifier.width(10.dp))
+
+                Column {
+                    Text(
+                        text = "${fetchItem.name}",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "${fetchItem.id}",
+                        fontSize = 15.sp
+                    )
+                }
+            }
+
+            Icon(
+                painter = painterResource(R.drawable.unsaved),
+                contentDescription = "",
+                tint = FetchOrange
+            )
+        }
+
+        Spacer(modifier = Modifier.height(30.dp))
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+                .background(FetchOrange)
         )
-        Spacer(Modifier.width(20.dp))
-        Text(
-            text = "Id: ${fetchItem.id}",
-            fontSize = 18.sp
-        )
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 3.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            Spacer(modifier = Modifier.width(10.dp))
+            Icon(
+                painter = painterResource(R.drawable.points),
+                modifier = Modifier.size(20.dp),
+                contentDescription = "",
+                tint = Color.Yellow
+            )
+            Spacer(modifier = Modifier.width(5.dp))
+            Text(
+                text = "${Random.nextInt(0, 3000)}"
+            )
+        }
     }
-
-
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .padding(
-            start = 50.dp,
-            end = 15.dp
-        )
-        .background(Color.DarkGray)
-        .height(1.dp)
-    )
 }

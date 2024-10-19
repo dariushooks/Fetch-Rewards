@@ -11,8 +11,8 @@ android {
 
     defaultConfig {
         applicationId = "com.example.fetchrewards"
-        minSdk = 28
-        targetSdk = 34
+        minSdk = 31
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -78,4 +78,7 @@ dependencies {
     val retrofit_version = "2.9.0"
     implementation ("com.squareup.retrofit2:converter-gson:$retrofit_version")
     implementation ("com.squareup.retrofit2:retrofit:$retrofit_version")
+
+    //Splash Screen
+    implementation(libs.androidx.core.splashscreen)
 }
