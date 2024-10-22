@@ -11,4 +11,6 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
 val FetchOrange = Color(0xffec8434)
+val FetchOrangeLight = Color(0xfffbe6d6)
 val FetchPurple = Color(0xff340c3c)
+val FetchPurpleLight = Color(0xffd6ced9)

@@ -3,6 +3,7 @@ package com.example.fetchrewards
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,14 +40,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fetchrewards.ui.theme.FetchOrange
+import com.example.fetchrewards.ui.theme.FetchOrangeLight
 import com.example.fetchrewards.ui.theme.FetchPurple
+import com.example.fetchrewards.ui.theme.FetchPurpleLight
 import com.example.fetchrewards.ui.theme.FetchRewardsTheme
 import kotlin.random.Random
 
-@Preview
+@Preview(apiLevel = 34)
 @Composable
 fun MainScreenPreview(){
-    FetchRewardsTheme {
+    FetchRewardsTheme{
         Surface {
             MainScreen(
                 fetchTestData,
@@ -159,15 +162,37 @@ fun GroupItem(fetchItem: FetchItem){
                 Spacer(modifier = Modifier.width(10.dp))
 
                 Column {
-                    Text(
-                        text = "${fetchItem.name}",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = "${fetchItem.id}",
-                        fontSize = 15.sp
-                    )
+                    Card(
+                        shape = RoundedCornerShape(5.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = textContainerColor(isSystemInDarkTheme())
+                        )
+                    ) {
+                        Text(
+                            text = "${fetchItem.name}",
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = textColor(isSystemInDarkTheme()),
+                            modifier = Modifier.padding(horizontal = 5.dp)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(2.dp))
+
+                    Card(
+                        shape = RoundedCornerShape(5.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = textContainerColor(isSystemInDarkTheme())
+                        )
+                    ) {
+                        Text(
+                            text = "${fetchItem.id}",
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = textColor(isSystemInDarkTheme()),
+                            modifier = Modifier.padding(horizontal = 5.dp)
+                        )
+                    }
                 }
             }
 
@@ -184,7 +209,7 @@ fun GroupItem(fetchItem: FetchItem){
             modifier = Modifier
                 .fillMaxWidth()
                 .height(1.dp)
-                .background(FetchOrange)
+                .background(dividerColor(isSystemInDarkTheme()))
         )
 
         Row(
@@ -207,3 +232,22 @@ fun GroupItem(fetchItem: FetchItem){
         }
     }
 }
+
+private fun dividerColor(darkTheme : Boolean) : Color =
+    if(darkTheme)
+        FetchOrange
+    else
+        FetchPurple
+
+private fun textColor(darkTheme : Boolean) : Color =
+    if(darkTheme)
+        FetchOrange
+    else
+        FetchPurple
+
+private fun textContainerColor(darkTheme : Boolean) : Color =
+    if(darkTheme)
+        FetchOrangeLight
+    else
+        FetchPurpleLight
+
