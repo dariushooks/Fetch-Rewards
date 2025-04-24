@@ -29,7 +29,7 @@ class MainActivity : ComponentActivity() {
                 ) { innerPadding ->
 
                     MainScreen(
-                        map = viewModel.fetchItems.value,
+                        fetchItems = viewModel.fetchItems.value,
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(innerPadding)

@@ -21,20 +21,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
-import androidx.compose.material3.carousel.HorizontalUncontainedCarousel
-import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -52,17 +48,19 @@ fun MainScreenPreview(){
     FetchRewardsTheme{
         Surface {
             MainScreen(
-                fetchTestData,
+                fetchTestData.toList(),
                 modifier = Modifier.fillMaxSize()
             )
         }
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun MainScreen(map: Map<Int, List<FetchItem>>, modifier: Modifier){
-    val fetchItems = map.toList()
+fun MainScreen(
+    fetchItems: List<Pair<Int, List<FetchItem>>>?,
+    modifier: Modifier
+){
     Column(modifier = modifier) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -85,54 +83,54 @@ fun MainScreen(map: Map<Int, List<FetchItem>>, modifier: Modifier){
             )
         }
 
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(40.dp)
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center,
         ){
-
-            fetchItems.forEach { pair ->
-                stickyHeader(key = pair.first){
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        shape = RoundedCornerShape(0.dp),
-                        colors = CardDefaults.cardColors(containerColor = FetchOrange)
-                    ) {
-                        Spacer(Modifier.height(10.dp))
-                        Row(modifier = Modifier.fillMaxWidth()) {
-                            Spacer(Modifier.width(20.dp))
-                            Text(
-                                text = "List Id ${pair.first}",
-                                fontSize = 25.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = FetchPurple
-                            )
+            if(fetchItems != null){
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(40.dp)
+                ){
+                    fetchItems.forEach { pair ->
+                        stickyHeader(key = pair.first){
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                shape = RoundedCornerShape(0.dp),
+                                colors = CardDefaults.cardColors(containerColor = FetchOrange)
+                            ) {
+                                Spacer(Modifier.height(10.dp))
+                                Row(modifier = Modifier.fillMaxWidth()) {
+                                    Spacer(Modifier.width(20.dp))
+                                    Text(
+                                        text = "List Id ${pair.first}",
+                                        fontSize = 25.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = FetchPurple
+                                    )
+                                }
+                                Spacer(Modifier.height(10.dp))
+                            }
                         }
-                        Spacer(Modifier.height(10.dp))
-                    }
-                }
 
-                item{
-                    /*HorizontalMultiBrowseCarousel(
-                        state = rememberCarouselState { pair.second.size },
-                        preferredItemWidth = 250.dp,
-                        itemSpacing = 30.dp,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 10.dp)
-                    ) { index ->
-                        GroupItem(pair.second[index])
-                    }*/
-                    LazyRow(
-                        modifier = Modifier.padding(start = 10.dp),
-                        horizontalArrangement = Arrangement.spacedBy(20.dp)
-                    ) {
-                        items(
-                            items = pair.second,
-                        ){ fetchItem ->
-                            GroupItem(fetchItem)
+                        item{
+                            LazyRow(
+                                modifier = Modifier.padding(start = 10.dp),
+                                horizontalArrangement = Arrangement.spacedBy(20.dp)
+                            ) {
+                                items(
+                                    items = pair.second,
+                                ){ fetchItem ->
+                                    GroupItem(fetchItem)
+                                }
+                            }
                         }
                     }
                 }
+            }
+
+            else{
+                CircularProgressIndicator()
             }
         }
     }

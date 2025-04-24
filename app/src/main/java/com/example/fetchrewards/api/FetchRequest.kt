@@ -7,5 +7,5 @@ import retrofit2.http.GET
 interface FetchRequest {
 
     @GET("hiring.json")
-    suspend fun getItems() : Response<List<FetchItem>>
+    suspend fun getItems() : List<FetchItem>
 }

@@ -1,16 +1,18 @@
 package com.example.fetchrewards
 
 import com.example.fetchrewards.api.FetchRequest
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class MainRepository @Inject constructor(
     private val fetchRequest: FetchRequest,
 ) {
-    suspend fun getItems() : Map<Int, List<FetchItem>>{
-        val rawItems = fetchRequest.getItems().body()
+    suspend fun getItems() : Flow<List<Pair<Int, List<FetchItem>>>> = flow {
+        val rawItems = fetchRequest.getItems()
         val fetchMap = mutableMapOf<Int, List<FetchItem>>()
 
-        rawItems?.let { items ->
+        rawItems.let { items ->
             //Filter out items with names that are blank or null
             items.filter { item ->
                 item.name != null && item.name != ""
@@ -27,6 +29,6 @@ class MainRepository @Inject constructor(
             }
         }
 
-        return fetchMap
+       emit(fetchMap.toList())
     }
 }

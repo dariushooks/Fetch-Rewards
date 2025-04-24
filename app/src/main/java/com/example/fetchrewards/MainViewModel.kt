@@ -2,6 +2,7 @@ package com.example.fetchrewards
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -10,15 +11,18 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(private val repository: MainRepository) : ViewModel(){
-    private val _fetchItems = mutableStateOf<Map<Int, List<FetchItem>>>(mapOf())
-    val fetchItems : MutableState<Map<Int, List<FetchItem>>> get() = _fetchItems
+    val fetchItems = mutableStateOf<List<Pair<Int, List<FetchItem>>>?>(null)
+
     init {
         getItems()
     }
 
     private fun getItems(){
         viewModelScope.launch {
-           _fetchItems.value = repository.getItems()
+           repository.getItems().collect{
+               fetchItems.value = it
+           }
         }
     }
+
 }
