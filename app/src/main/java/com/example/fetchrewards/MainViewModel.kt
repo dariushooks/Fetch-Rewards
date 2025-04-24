@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,7 +18,9 @@ class MainViewModel @Inject constructor(private val repository: MainRepository) 
         getItems()
     }
 
-    private fun getItems(){
+    fun getItems(){
+        if(fetchItems.value != null)
+            fetchItems.value = null
         viewModelScope.launch {
            repository.getItems().collect{
                fetchItems.value = it

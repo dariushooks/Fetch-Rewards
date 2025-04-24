@@ -19,6 +19,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -48,7 +51,8 @@ fun MainScreenPreview(){
     FetchRewardsTheme{
         Surface {
             MainScreen(
-                fetchTestData.toList(),
+                emptyList(),
+                {},
                 modifier = Modifier.fillMaxSize()
             )
         }
@@ -59,6 +63,7 @@ fun MainScreenPreview(){
 @Composable
 fun MainScreen(
     fetchItems: List<Pair<Int, List<FetchItem>>>?,
+    reload : () -> Unit,
     modifier: Modifier
 ){
     Column(modifier = modifier) {
@@ -88,42 +93,73 @@ fun MainScreen(
             contentAlignment = Alignment.Center,
         ){
             if(fetchItems != null){
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(40.dp)
-                ){
-                    fetchItems.forEach { pair ->
-                        stickyHeader(key = pair.first){
-                            Card(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                shape = RoundedCornerShape(0.dp),
-                                colors = CardDefaults.cardColors(containerColor = FetchOrange)
-                            ) {
-                                Spacer(Modifier.height(10.dp))
-                                Row(modifier = Modifier.fillMaxWidth()) {
-                                    Spacer(Modifier.width(20.dp))
-                                    Text(
-                                        text = "List Id ${pair.first}",
-                                        fontSize = 25.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = FetchPurple
-                                    )
+                if(fetchItems.isNotEmpty()){
+                    LazyColumn(
+                        verticalArrangement = Arrangement.spacedBy(40.dp)
+                    ){
+                        fetchItems.forEach { pair ->
+                            stickyHeader(key = pair.first){
+                                Card(
+                                    modifier = Modifier
+                                        .fillMaxWidth(),
+                                    shape = RoundedCornerShape(0.dp),
+                                    colors = CardDefaults.cardColors(containerColor = FetchOrange)
+                                ) {
+                                    Spacer(Modifier.height(10.dp))
+                                    Row(modifier = Modifier.fillMaxWidth()) {
+                                        Spacer(Modifier.width(20.dp))
+                                        Text(
+                                            text = "List Id ${pair.first}",
+                                            fontSize = 25.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = FetchPurple
+                                        )
+                                    }
+                                    Spacer(Modifier.height(10.dp))
                                 }
-                                Spacer(Modifier.height(10.dp))
+                            }
+
+                            item{
+                                LazyRow(
+                                    modifier = Modifier.padding(start = 10.dp),
+                                    horizontalArrangement = Arrangement.spacedBy(20.dp)
+                                ) {
+                                    items(
+                                        items = pair.second,
+                                    ){ fetchItem ->
+                                        GroupItem(fetchItem)
+                                    }
+                                }
                             }
                         }
+                    }
+                }
 
-                        item{
-                            LazyRow(
-                                modifier = Modifier.padding(start = 10.dp),
-                                horizontalArrangement = Arrangement.spacedBy(20.dp)
-                            ) {
-                                items(
-                                    items = pair.second,
-                                ){ fetchItem ->
-                                    GroupItem(fetchItem)
-                                }
-                            }
+                else{
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "Error loading data",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp
+                        )
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        Button(
+                            onClick = { reload() },
+                            colors = ButtonColors(
+                                containerColor = FetchOrange,
+                                contentColor = Color.White,
+                                disabledContainerColor = FetchPurpleLight,
+                                disabledContentColor = Color.LightGray
+                            )
+                        ){
+                            Text(
+                                text = "Reload data",
+                                fontSize = 18.sp
+                            )
                         }
                     }
                 }

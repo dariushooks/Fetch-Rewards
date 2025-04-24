@@ -30,6 +30,7 @@ class MainActivity : ComponentActivity() {
 
                     MainScreen(
                         fetchItems = viewModel.fetchItems.value,
+                        { viewModel.getItems() },
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(innerPadding)
